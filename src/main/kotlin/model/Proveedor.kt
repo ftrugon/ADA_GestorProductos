@@ -14,16 +14,22 @@ class Proveedor(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id:Long? = null,
+    val id: Long? = null,
 
     @Column
-    val nombre: String,
+    var nombre: String = "",
 
     @Column
-    val direccion: String,
+    var direccion: String = "",
 
     @OneToMany(mappedBy = "proveedor")
-    val productos: List<Producto>? = null
+    var productos: List<Producto>? = null
 
 ) {
+    constructor() : this(
+        id = null,
+        nombre = "",
+        direccion = "",
+        productos = null
+    )
 }

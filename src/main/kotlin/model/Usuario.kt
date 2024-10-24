@@ -11,10 +11,12 @@ import sun.security.util.Password
 class Usuario(
 
     @Id
-    val nombreUsuario: String,
+    var nombreUsuario: String,
 
     @Column(nullable = false, length = 20)
-    val password: String
+    var password: String
 
 ) {
+    constructor():this("","")
+
 }

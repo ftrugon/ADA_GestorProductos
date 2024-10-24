@@ -7,6 +7,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
+import model.Usuario
 import java.util.Date
 
 @Entity
@@ -14,32 +15,43 @@ import java.util.Date
 class Producto(
 
     @Id
-    val id: String,
+    val id: String = "",
 
     @Column
-    val categoria: String,
+    var categoria: String = "",
 
     @Column
-    val nombre: String,
+    var nombre: String = "",
 
     @Column
-    val descripcion: String,
+    var descripcion: String = "",
 
     @Column
-    val precioSinIva: Float,
+    var precioSinIva: Float = 0.0f,
 
     @Column
-    val precionConIva: Float,
+    var precionConIva: Float = 0.0f,
 
     @Column
-    val fecha_alta:Date,
+    val fecha_alta: Date = Date(),
 
     @Column
-    val stock: Int,
+    var stock: Int = 0,
 
     @ManyToOne
     @JoinColumn(name = "id_Proveedor")
-    val proveedor: Proveedor
+    var proveedor: Proveedor? = null
 
 ) {
+    constructor() : this(
+        id = "",
+        categoria = "",
+        nombre = "",
+        descripcion = "",
+        precioSinIva = 0.0f,
+        precionConIva = 0.0f,
+        fecha_alta = Date(),
+        stock = 0,
+        proveedor = null
+    )
 }

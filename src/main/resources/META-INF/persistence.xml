@@ -16,9 +16,10 @@
             <property name="javax.persistence.jdbc.user" value="root" />
             <property name="javax.persistence.jdbc.password" value="" />
 
-            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="create" />
+            <!-- DESACTIVAR LOS MENSAJES ROJOS -->
+            <!--<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" />-->
+            <!--<property name="hibernate.show_sql" value="false" />-->
+            <property name="hibernate.hbm2ddl.auto" value="update" />
         </properties>
 
     </persistence-unit>
