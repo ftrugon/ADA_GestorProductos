@@ -1,15 +1,27 @@
+import Repository.ProductoRepository
+import Repository.ProveedorRepository
 import Repository.UserRepository
 import jakarta.persistence.Persistence
+import model.Proveedor
 import model.Usuario
 
 fun main() {
 
-    val uR = UserRepository()
+    //para instanciar el objeto que genera los em
+    EntityManagerGenerator
 
-    val userToInsert = Usuario("fran","fran")
 
-    //uR.insertUser(userToInsert)
+    //Instancias necesarias para el programa principal
+    val consola = EntradaYSalida()
+    val usuarios = UserRepository(consola)
+    val proveedores = ProveedorRepository(consola)
+    val productos = ProductoRepository(consola)
 
-    uR.updateUserPass("fran","paco")
-    uR.deleteUser("")
+    //Programa principal
+    val app = AppManager(usuarios,productos,proveedores,consola)
+
+    //Controla las opciones
+    val opManager = OptionManager(app,consola)
+
+    opManager.startProgram()
 }

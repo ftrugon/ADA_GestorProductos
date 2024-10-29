@@ -1,33 +1,37 @@
 package Repository
 
+import Interfaces.ICrudProveedor
 import model.Proveedor
 
-class ProveedorRepository {
+class ProveedorRepository(
+    val entradaYSalida: EntradaYSalida
+) : ICrudProveedor {
 
-    fun insertProveedor(proveedor: Proveedor){
+    override fun insertProveedor(proveedor: Proveedor){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
 
         try {
-            val proveedorFind = em.find(Proveedor::class.java,proveedor.id)
+
+            var proveedorFind : Proveedor? = selectAllProveedors().find { it.nombre == proveedor.nombre && it.direccion == proveedor.direccion }
+
             if (proveedorFind == null){
                 em.persist(proveedor)
                 em.transaction.commit()
             }else{
-                println("El Proveedor que se ha introducido ya existe en la base de datos")
+                entradaYSalida.mostrarMensaje("El Proveedor que se ha introducido ya existe en la base de datos")
                 em.transaction.rollback()
             }
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
         em.close()
     }
 
-
-    fun selectProveedor(proveedorId: Long): Proveedor?{
+    override fun selectProveedor(proveedorId: Long): Proveedor?{
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -38,7 +42,7 @@ class ProveedorRepository {
             proveedorToReturn = em.find(Proveedor::class.java,proveedorId)
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -48,7 +52,7 @@ class ProveedorRepository {
     }
 
 
-    fun selectAllProveedors(): List<Proveedor>{
+    override fun selectAllProveedors(): List<Proveedor>{
 
         val em = EntityManagerGenerator.generateEntityManager()
         em.transaction.begin()
@@ -59,7 +63,7 @@ class ProveedorRepository {
             proveedorList = em.createQuery("FROM Proveedor", Proveedor::class.java).resultList
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -69,7 +73,7 @@ class ProveedorRepository {
     }
 
 
-    fun updateProveedorDir(proveedorId: Long, newDir: String){
+    override fun updateProveedorDir(proveedorId: Long, newDir: String){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -82,12 +86,12 @@ class ProveedorRepository {
                 proveedorToMod.direccion = newDir
                 em.transaction.commit()
             }else {
-                println("El Proveedor que intentas modificar no existe")
+                entradaYSalida.mostrarMensaje("El Proveedor que intentas modificar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -95,7 +99,7 @@ class ProveedorRepository {
     }
 
 
-    fun deleteProveedor(proveedorId: Long){
+    override fun deleteProveedor(proveedorId: Long){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -107,11 +111,12 @@ class ProveedorRepository {
                 em.remove(proveedorToDel)
                 em.transaction.commit()
             }else {
-                println("El Proveedor que intentas eliminar no existe")
+                entradaYSalida.mostrarMensaje("El Proveedor que intentas eliminar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 

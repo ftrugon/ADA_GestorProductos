@@ -1,10 +1,13 @@
 package Repository
 
+import Interfaces.ICrudUsuario
 import model.Usuario
 
-class UserRepository {
+class UserRepository(
+    val entradaYSalida: EntradaYSalida
+): ICrudUsuario {
 
-    fun insertUser(user: Usuario){
+    override fun insertUser(user: Usuario){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -15,11 +18,11 @@ class UserRepository {
                 em.persist(user)
                 em.transaction.commit()
             }else{
-                println("El usuario que se ha introducido ya existe en la base de datos")
+                entradaYSalida.mostrarMensaje("El usuario que se ha introducido ya existe en la base de datos")
                 em.transaction.rollback()
             }
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -27,7 +30,7 @@ class UserRepository {
     }
 
 
-    fun selectUser(userName: String): Usuario?{
+    override fun selectUser(userName: String): Usuario?{
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -38,7 +41,7 @@ class UserRepository {
             userToReturn = em.find(Usuario::class.java,userName)
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -48,7 +51,7 @@ class UserRepository {
     }
 
 
-    fun selectAllUsers(): List<Usuario>{
+    override fun selectAllUsers(): List<Usuario>{
 
         val em = EntityManagerGenerator.generateEntityManager()
         em.transaction.begin()
@@ -59,7 +62,7 @@ class UserRepository {
             userList = em.createQuery("FROM Usuario", Usuario::class.java).resultList
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -69,7 +72,7 @@ class UserRepository {
     }
 
 
-    fun updateUserPass(userName: String,newPass: String){
+    override fun updateUserPass(userName: String,newPass: String){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -82,12 +85,12 @@ class UserRepository {
                 userToMod.password = newPass
                 em.transaction.commit()
             }else {
-                println("El usuario que intentas modificar no existe")
+                entradaYSalida.mostrarMensaje("El usuario que intentas modificar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -95,7 +98,7 @@ class UserRepository {
     }
 
 
-    fun deleteUser(userName: String){
+    override fun deleteUser(userName: String){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -107,11 +110,12 @@ class UserRepository {
                 em.remove(userToDel)
                 em.transaction.commit()
             }else {
-                println("El usuario que intentas eliminar no existe")
+                entradaYSalida.mostrarMensaje("El usuario que intentas eliminar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 

@@ -1,11 +1,14 @@
 package Repository
 
+import Interfaces.ICrudProducto
 import model.Producto
 import model.Proveedor
 
-class ProductoRepository {
+class ProductoRepository(
+    val entradaYSalida: EntradaYSalida
+): ICrudProducto {
 
-    fun insertProducto(producto: Producto){
+    override fun insertProducto(producto: Producto){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -16,18 +19,18 @@ class ProductoRepository {
                 em.persist(producto)
                 em.transaction.commit()
             }else{
-                println("El producto que se ha introducido ya existe en la base de datos")
+                entradaYSalida.mostrarMensaje("El producto que se ha introducido ya existe en la base de datos")
                 em.transaction.rollback()
             }
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
 
     }
 
-    fun getProducto(id: String): Producto?{
+    override fun getProducto(id: String): Producto?{
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -38,7 +41,7 @@ class ProductoRepository {
             productToReturn = em.find(Producto::class.java,id)
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -47,7 +50,7 @@ class ProductoRepository {
         return productToReturn
     }
 
-    fun getAllProductos(): List<Producto>{
+    override fun getAllProductos(): List<Producto>{
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -58,7 +61,7 @@ class ProductoRepository {
             productList = em.createQuery("FROM Producto", Producto::class.java).resultList
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -67,7 +70,7 @@ class ProductoRepository {
         return productList
     }
 
-    fun getAllProductosWithStock(): List<Producto>{
+    override fun getAllProductosWithStock(): List<Producto>{
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -78,7 +81,7 @@ class ProductoRepository {
             productList = em.createQuery("FROM Producto", Producto::class.java).resultList.filter { it.stock > 0 }
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -87,7 +90,7 @@ class ProductoRepository {
         return productList
     }
 
-    fun getAllProductsWithoutStock(): List<Producto>{
+    override fun getAllProductsWithoutStock(): List<Producto>{
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -98,7 +101,7 @@ class ProductoRepository {
             productList = em.createQuery("FROM Producto", Producto::class.java).resultList.filter { it.stock <= 0 }
             em.transaction.commit()
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -107,7 +110,7 @@ class ProductoRepository {
         return productList
     }
 
-    fun getProveedorFromProducto(id: String): Proveedor?{
+    override fun getProveedorFromProducto(id: String): Proveedor?{
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -117,14 +120,14 @@ class ProductoRepository {
         try {
             val producto = getProducto(id)
             if (producto == null){
-                println("El producto no existe")
+                entradaYSalida.mostrarMensaje("El producto no existe")
                 em.transaction.rollback()
             }else {
                 provToReturn = producto.proveedor
                 em.transaction.commit()
             }
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
@@ -134,7 +137,7 @@ class ProductoRepository {
 
     }
 
-    fun updateNombre(id: String,newNombre: String){
+    override fun updateNombre(id: String,newNombre: String){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -147,19 +150,19 @@ class ProductoRepository {
                 productToMod.nombre = newNombre
                 em.transaction.commit()
             }else {
-                println("El producto que intentas modificar no existe")
+                entradaYSalida.mostrarMensaje("El producto que intentas modificar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
         em.close()
     }
 
-    fun modStock(id: String, newStock: Int){
+    override fun modStock(id: String, newStock: Int){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -172,19 +175,19 @@ class ProductoRepository {
                 productToMod.stock = newStock
                 em.transaction.commit()
             }else {
-                println("El producto que intentas modificar no existe")
+                entradaYSalida.mostrarMensaje("El producto que intentas modificar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
         em.close()
     }
 
-    fun restarStock(id: String, toDecrease: Int){
+    override fun restarStock(id: String, toDecrease: Int){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -197,19 +200,19 @@ class ProductoRepository {
                 productToMod.stock -= toDecrease
                 em.transaction.commit()
             }else {
-                println("El producto que intentas modificar no existe")
+                entradaYSalida.mostrarMensaje("El producto que intentas modificar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
         em.close()
     }
 
-    fun sumarStock(id: String, toIncrease: Int){
+    override fun sumarStock(id: String, toIncrease: Int){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -222,19 +225,19 @@ class ProductoRepository {
                 productToMod.stock += toIncrease
                 em.transaction.commit()
             }else {
-                println("El producto que intentas modificar no existe")
+                entradaYSalida.mostrarMensaje("El producto que intentas modificar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
-            println(e.message)
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
         em.close()
     }
 
-    fun deleteProducto(id: String){
+    override fun deleteProducto(id: String){
         val em = EntityManagerGenerator.generateEntityManager()
 
         em.transaction.begin()
@@ -246,11 +249,12 @@ class ProductoRepository {
                 em.remove(productToDel)
                 em.transaction.commit()
             }else {
-                println("El producto que intentas eliminar no existe")
+                entradaYSalida.mostrarMensaje("El producto que intentas eliminar no existe")
                 em.transaction.rollback()
             }
 
         }catch (e: Exception){
+            entradaYSalida.mostrarMensaje(e.message)
             em.transaction.rollback()
         }
 
