@@ -23,5 +23,6 @@ fun main() {
     //Controla las opciones
     val opManager = OptionManager(app,consola)
 
+    //Empieza el programa
     opManager.startProgram()
 }
