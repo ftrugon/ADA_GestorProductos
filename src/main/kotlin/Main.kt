@@ -1,6 +1,9 @@
 import Repository.ProductoRepository
 import Repository.ProveedorRepository
 import Repository.UserRepository
+import Service.ProductoService
+import Service.ProveedorService
+import Service.UserService
 import jakarta.persistence.Persistence
 import model.Proveedor
 import model.Usuario
@@ -17,8 +20,14 @@ fun main() {
     val proveedores = ProveedorRepository(consola)
     val productos = ProductoRepository(consola)
 
+    //Crea los servicios
+    val userService = UserService(usuarios)
+    val productService = ProductoService(productos)
+    val proveedorService = ProveedorService(proveedores)
+
+
     //Programa principal
-    val app = AppManager(usuarios,productos,proveedores,consola)
+    val app = AppManager(userService,productService,proveedorService,consola)
 
     //Controla las opciones
     val opManager = OptionManager(app,consola)

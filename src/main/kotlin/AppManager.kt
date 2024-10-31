@@ -1,6 +1,9 @@
 import Interfaces.ICrudProducto
 import Interfaces.ICrudProveedor
 import Interfaces.ICrudUsuario
+import Service.ProductoService
+import Service.ProveedorService
+import Service.UserService
 import model.Producto
 import model.Proveedor
 import model.Usuario
@@ -8,9 +11,9 @@ import java.util.Date
 import kotlin.math.absoluteValue
 
 class AppManager(
-    val usuarioCrud: ICrudUsuario,
-    val productoCrud: ICrudProducto,
-    val proveedorCrud: ICrudProveedor,
+    val userService: UserService,
+    val productoService: ProductoService,
+    val proveedorService: ProveedorService,
     val entradaYSalida: EntradaYSalida
 ) {
 
@@ -18,12 +21,12 @@ class AppManager(
         val nombre = entradaYSalida.pedirString("Dime el nombre del usuario a registrar: ")
         val contrasena = entradaYSalida.pedirString("Dime la contraseña del usuario a registrar: ")
 
-        usuarioCrud.insertUser(Usuario(nombre,contrasena))
+        userService.insertUser(Usuario(nombre,contrasena))
 
     }
 
     fun login(userName: String,pass: String): Boolean{
-        val userExist = usuarioCrud.selectUser(userName)
+        val userExist = userService.selectUser(userName)
 
         if (userExist != null){
             return if (userExist.nombreUsuario == userName && userExist.password == pass){
@@ -52,7 +55,7 @@ class AppManager(
         val stock = entradaYSalida.pedirInt("Dime el stock del producto a añadir: ")
 
         //Obtiene los proveedores y los muestra
-        val proveedores = proveedorCrud.selectAllProveedors()
+        val proveedores = proveedorService.selectAllProveedors()
 
         entradaYSalida.mostrarMensaje("Estos son los proveedores que hay --> ")
 
@@ -77,7 +80,7 @@ class AppManager(
             if (createOp == 1) {
 
                 val proov = Proveedor(null,nombre = proovedorName, direccion = dir,null)
-                proveedorCrud.insertProveedor(proov)
+                proveedorService.insertProveedor(proov)
                 val productoToInsert =
                     Producto(
                         id = calcularId(cat,nom,proovedorName),
@@ -89,7 +92,7 @@ class AppManager(
                         fecha_alta =  Date(),
                         stock =  stock,
                         proveedor = proov)
-                productoCrud.insertProducto(productoToInsert)
+                productoService.insertProducto(productoToInsert)
             }else{
                 entradaYSalida.mostrarMensaje("No se ha creado ni el proveedor ni el producto")
             }
@@ -105,12 +108,12 @@ class AppManager(
                     fecha_alta =  Date(),
                     stock =  stock,
                     proveedor = proveedor)
-            productoCrud.insertProducto(productoToInsert)
+            productoService.insertProducto(productoToInsert)
         }
     }
 
     private fun mostrarProductos(){
-        val productos = productoCrud.getAllProductos()
+        val productos = productoService.getAllProductos()
 
         entradaYSalida.mostrarMensaje("Estos son todos los productos")
 
@@ -125,7 +128,7 @@ class AppManager(
 
         val id = entradaYSalida.pedirString("Dime la id del producto que quieres eliminar: ")
 
-        productoCrud.deleteProducto(id)
+        productoService.deleteProducto(id)
 
     }
 
@@ -137,7 +140,7 @@ class AppManager(
 
         val newName = entradaYSalida.pedirString("Dime el nuevo nombre del producto: ")
 
-        productoCrud.updateNombre(id,newName)
+        productoService.updateNombre(id,newName)
 
     }
 
@@ -158,13 +161,13 @@ class AppManager(
 
         when (op){
             1 ->{
-                productoCrud.modStock(id,nuevoNum)
+                productoService.modStock(id,nuevoNum)
             }
             2 ->{
-                productoCrud.sumarStock(id,nuevoNum)
+                productoService.sumarStock(id,nuevoNum)
             }
             3 ->{
-                productoCrud.restarStock(id,nuevoNum)
+                productoService.restarStock(id,nuevoNum)
             }
         }
     }
@@ -175,7 +178,7 @@ class AppManager(
 
         val id = entradaYSalida.pedirString("Dime la id del producto que quieres ver toda la informacion: ")
 
-        val product = productoCrud.getProducto(id)
+        val product = productoService.getProducto(id)
 
         if (product != null){
             entradaYSalida.mostrarMensaje("${product.id}, ${product.categoria}, ${product.nombre}, ${product.precionConIva}, ${product.proveedor} ")
@@ -185,7 +188,7 @@ class AppManager(
 
     fun obtenerProductosConStock(){
         entradaYSalida.mostrarMensaje("Estos son todos los productos con stock: ")
-        productoCrud.getAllProductosWithStock().forEach { product ->
+        productoService.getAllProductosWithStock().forEach { product ->
             entradaYSalida.mostrarMensaje("${product.id}, ${product.categoria}, ${product.nombre}, ${product.precionConIva}, ${product.proveedor} ")
 
         }
@@ -193,7 +196,7 @@ class AppManager(
 
     fun obtenerProductosSinStock(){
         entradaYSalida.mostrarMensaje("Estos son todos los productos sin stock: ")
-        productoCrud.getAllProductsWithoutStock().forEach { product ->
+        productoService.getAllProductsWithoutStock().forEach { product ->
             entradaYSalida.mostrarMensaje("${product.id}, ${product.categoria}, ${product.nombre}, ${product.precionConIva}, ${product.proveedor} ")
         }
     }
@@ -203,7 +206,7 @@ class AppManager(
 
         val id = entradaYSalida.pedirString("Dime la id del producto que quieres ver toda la informacion: ")
 
-        val proveedor = productoCrud.getProducto(id)?.proveedor
+        val proveedor = productoService.getProducto(id)?.proveedor
 
         if (proveedor != null){
             entradaYSalida.mostrarMensaje("${proveedor.id}, ${proveedor.nombre}, ${proveedor.direccion} ")
@@ -213,7 +216,7 @@ class AppManager(
     fun getAllProveedores(){
         entradaYSalida.mostrarMensaje("Todos los proveedores: ")
 
-        proveedorCrud.selectAllProveedors().forEach { proveedor ->
+        proveedorService.selectAllProveedors().forEach { proveedor ->
             entradaYSalida.mostrarMensaje("${proveedor.id}, ${proveedor.nombre}, ${proveedor.direccion} ")
 
         }

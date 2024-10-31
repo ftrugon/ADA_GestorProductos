@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7afac059-a1b3-45c4-be27-580483ad177d" name="Changes" comment="near finish">
+    <list default="true" id="7afac059-a1b3-45c4-be27-580483ad177d" name="Changes" comment="supongo que esta hecho pero mal">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/AppManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/AppManager.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -105,7 +106,15 @@
       <option name="project" value="LOCAL" />
       <updated>1730218173666</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="supongo que esta hecho pero mal">
+      <option name="closed" value="true" />
+      <created>1730233793063</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1730233793063</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -113,6 +122,8 @@
     <MESSAGE value="creo que todos los cruds estan hechos" />
     <MESSAGE value="creo que todos los cruds estan hechos pero no probados" />
     <MESSAGE value="near finish" />
-    <option name="LAST_COMMIT_MESSAGE" value="near finish" />
+    <MESSAGE value="supongo que esta hecho" />
+    <MESSAGE value="supongo que esta hecho pero mal" />
+    <option name="LAST_COMMIT_MESSAGE" value="supongo que esta hecho pero mal" />
   </component>
 </project>
